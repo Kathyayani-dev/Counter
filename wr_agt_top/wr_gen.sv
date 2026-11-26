@@ -1,0 +1,25 @@
+# code for write generator(sequencer)
+...
+   class count_gen;
+         count_trans trans_h;
+         count_trans data2send;
+         mailbox #(count_trans)gen2dr;
+         function new(mailbox #(count_trans)gen2dr);
+           this.gen2dr=gen2dr;
+           this.trans_h=new;
+         endfunction
+         virtual task start();
+           fork
+             begin
+               for(int i=0;i<150;i++)
+                 begin
+                   assert(trans_h.randomize());
+                   data2send=new trans_h;//shallow copy
+                   gen2dr.put(data2send);
+                   //$display("trans %p",data2send);
+                 end
+             end
+           join_none
+         endtask
+   endclass
+...
